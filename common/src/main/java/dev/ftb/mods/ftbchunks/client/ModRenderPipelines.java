@@ -1,26 +1,27 @@
 package dev.ftb.mods.ftbchunks.client;
 
-import com.mojang.blaze3d.pipeline.BlendFunction;
-import com.mojang.blaze3d.pipeline.ColorTargetState;
-import com.mojang.blaze3d.pipeline.DepthStencilState;
-import com.mojang.blaze3d.pipeline.RenderPipeline;
-import com.mojang.blaze3d.platform.CompareOp;
-import com.mojang.blaze3d.shaders.UniformType;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.VertexFormat;
+import com.mojang.renderpearl.api.pipeline.BlendFunction;
+import com.mojang.renderpearl.api.pipeline.ColorTargetState;
+import com.mojang.renderpearl.api.pipeline.PrimitiveTopology;
+import com.mojang.renderpearl.api.pipeline.RenderPipeline;
 import dev.ftb.mods.ftbchunks.api.FTBChunksAPI;
+import net.minecraft.client.renderer.BindGroupLayouts;
+import net.minecraft.client.renderer.RenderPipelines;
 
 public class ModRenderPipelines {
-    public static final RenderPipeline MINIMAP_MASKED = RenderPipeline.builder()
-            .withUniform("DynamicTransforms", UniformType.UNIFORM_BUFFER)
-            .withUniform("Projection", UniformType.UNIFORM_BUFFER)
+    // 26.3: pipelines are built from bind group layouts, vertex bindings and a primitive topology
+    // (renderpearl API). This mirrors vanilla's GUI_TEXTURED_SNIPPET, with a second sampler for the mask.
+    // GUI pipelines no longer carry a depth/stencil state (previously ALWAYS_PASS without depth writes).
+    public static final RenderPipeline MINIMAP_MASKED = RenderPipeline.builder(RenderPipelines.GLOBALS_SNIPPET)
+            .withBindGroupLayout(BindGroupLayouts.PROJECTION)
+            .withBindGroupLayout(BindGroupLayouts.DYNAMIC_TRANSFORMS)
             .withVertexShader(FTBChunksAPI.id("core/minimap_mask"))
             .withFragmentShader(FTBChunksAPI.id("core/minimap_mask"))
-            .withSampler("Sampler0")
-            .withSampler("Sampler1")
-            .withDepthStencilState(new DepthStencilState(CompareOp.ALWAYS_PASS, false))
-            .withVertexFormat(DefaultVertexFormat.POSITION_TEX_COLOR, VertexFormat.Mode.QUADS)
+            .withBindGroupLayout(BindGroupLayouts.SAMPLER0_SAMPLER1)
             .withColorTargetState(new ColorTargetState(BlendFunction.TRANSLUCENT))
+            .withVertexBinding(0, DefaultVertexFormat.POSITION_TEX_COLOR)
+            .withPrimitiveTopology(PrimitiveTopology.QUADS)
             .withLocation(FTBChunksAPI.id("pipeline/minimap_mask"))
             .build();
 }

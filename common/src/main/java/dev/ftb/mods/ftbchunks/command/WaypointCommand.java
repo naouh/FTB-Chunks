@@ -10,13 +10,14 @@ import dev.ftb.mods.ftblibrary.platform.network.Server2PlayNetworking;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import net.minecraft.commands.arguments.ColorArgument;
+import net.minecraft.commands.arguments.TeamColorArgument;
 import net.minecraft.commands.arguments.DimensionArgument;
 import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.scores.TeamColor;
 
 public class WaypointCommand {
     static LiteralArgumentBuilder<CommandSourceStack> register() {
@@ -36,13 +37,13 @@ public class WaypointCommand {
                                                         DimensionArgument.getDimension(context, "dimension"),
                                                         BlockPosArgument.getBlockPos(context, "position"))
                                                 )
-                                                .then(Commands.argument("color", ColorArgument.color())
+                                                .then(Commands.argument("color", TeamColorArgument.teamColor())
                                                         .executes(context -> addWaypoint(
                                                                 context.getSource(),
                                                                 StringArgumentType.getString(context, "name"),
                                                                 DimensionArgument.getDimension(context, "dimension"),
                                                                 BlockPosArgument.getBlockPos(context, "position"),
-                                                                ColorArgument.getColor(context, "color"))
+                                                                TeamColorArgument.getTeamColor(context, "color"))
                                                         )
                                                         .then(Commands.argument("gui", BoolArgumentType.bool())
                                                                 .executes(context -> addWaypoint(
@@ -50,7 +51,7 @@ public class WaypointCommand {
                                                                         StringArgumentType.getString(context, "name"),
                                                                         DimensionArgument.getDimension(context, "dimension"),
                                                                         BlockPosArgument.getBlockPos(context, "position"),
-                                                                        ColorArgument.getColor(context, "color"),
+                                                                        TeamColorArgument.getTeamColor(context, "color"),
                                                                         BoolArgumentType.getBool(context, "gui"))
                                                                 )
                                                         )
@@ -61,25 +62,24 @@ public class WaypointCommand {
                 );
     }
 
-    static int addWaypoint(CommandSourceStack source, String name, ServerLevel level, BlockPos position, ChatFormatting color, boolean useGui) throws CommandSyntaxException {
-        if (color.getColor() != null) {
-            Server2PlayNetworking.send(source.getPlayerOrException(), new AddWaypointPacket(name, new GlobalPos(level.dimension(), position), color.getColor(), useGui));
-            source.sendSuccess(() -> Component.translatable("ftbchunks.command.waypoint_added", name), true);
-        }
+    static int addWaypoint(CommandSourceStack source, String name, ServerLevel level, BlockPos position, TeamColor color, boolean useGui) throws CommandSyntaxException {
+        // 26.3: ColorArgument (ChatFormatting) was replaced by TeamColorArgument; every TeamColor has an RGB value
+        Server2PlayNetworking.send(source.getPlayerOrException(), new AddWaypointPacket(name, new GlobalPos(level.dimension(), position), color.rgb(), useGui));
+        source.sendSuccess(() -> Component.translatable("ftbchunks.command.waypoint_added", name), true);
         return Command.SINGLE_SUCCESS;
     }
 
-    private static int addWaypoint(CommandSourceStack source, String name, ServerLevel level, BlockPos position, ChatFormatting color) throws CommandSyntaxException {
+    private static int addWaypoint(CommandSourceStack source, String name, ServerLevel level, BlockPos position, TeamColor color) throws CommandSyntaxException {
         return addWaypoint(source, name, level, position, color, false);
     }
 
     private static int addWaypoint(CommandSourceStack source, String name, BlockPos position) throws CommandSyntaxException {
-        int idx = source.getPlayerOrException().getRandom().nextInt(ChatFormatting.values().length);
-        return addWaypoint(source, name, source.getLevel(), position, ChatFormatting.values()[idx], false);
+        int idx = source.getPlayerOrException().getRandom().nextInt(TeamColor.values().length);
+        return addWaypoint(source, name, source.getLevel(), position, TeamColor.values()[idx], false);
     }
 
     private static int addWaypoint(CommandSourceStack source, String name, ServerLevel level, BlockPos position) throws CommandSyntaxException {
-        int idx = source.getPlayerOrException().getRandom().nextInt(ChatFormatting.values().length);
-        return addWaypoint(source, name, level, position, ChatFormatting.values()[idx], false);
+        int idx = source.getPlayerOrException().getRandom().nextInt(TeamColor.values().length);
+        return addWaypoint(source, name, level, position, TeamColor.values()[idx], false);
     }
 }

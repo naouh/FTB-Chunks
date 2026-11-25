@@ -75,7 +75,7 @@ public class ChunkScreenPanel extends Panel {
 		this.chunkScreen = panel;
 		RenderMapImageTask.setAlwaysRenderChunksOnMap(true);
 
-		this.isAdminEnabled = Minecraft.getInstance().isSingleplayer();
+		this.isAdminEnabled = Minecraft.getInstance().isLocalServer();
 
 		MapManager.getInstance().ifPresent(m -> m.updateAllRegions(false));
 
@@ -83,7 +83,7 @@ public class ChunkScreenPanel extends Panel {
 	}
 
 	public static void notifyChunkUpdates(int totalChunks, int changedChunks, Map<String, Integer> problems) {
-		if (Minecraft.getInstance().screen instanceof ScreenWrapper sw && sw.getGui() instanceof ChunkScreen cs) {
+		if (Minecraft.getInstance().gui.screen() instanceof ScreenWrapper sw && sw.getGui() instanceof ChunkScreen cs) {
 			cs.getChunkScreen().updateInfo = new ChunkUpdateInfo(totalChunks, changedChunks, problems, ClientUtils.getClientLevel().getGameTime());
 			FTBChunksClient.INSTANCE.getMinimapRenderer().requestTextureRefresh();
 		}
@@ -185,7 +185,7 @@ public class ChunkScreenPanel extends Panel {
 
 		graphics.blit(RenderPipelines.GUI_TEXTURED, MinimapRegionCutoutTexture.ID, sx, sy, 0, 0, maxWidth, maxHeight, maxWidth, maxHeight);
 
-		if (!InputConstants.isKeyDown(Minecraft.getInstance().getWindow(), InputConstants.KEY_TAB)) {
+		if (!InputConstants.isKeyDown(InputConstants.KEY_TAB)) {
 			// grid overlay
 			for (int gy = 1; gy < FTBChunks.TILES; gy++) {
 				graphics.horizontalLine(sx, sx + maxWidth - 1, sy +  gy * tileSizeY, 0x64464646);
@@ -241,7 +241,7 @@ public class ChunkScreenPanel extends Panel {
 
 		@Override
 		public void drawBackground(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
-			if (chunk.getForceLoadedDate().isPresent() && !InputConstants.isKeyDown(Minecraft.getInstance().getWindow(), InputConstants.KEY_TAB)) {
+			if (chunk.getForceLoadedDate().isPresent() && !InputConstants.isKeyDown(InputConstants.KEY_TAB)) {
 				chunk.getTeam().ifPresent(team -> {
 					Color4I teamColor = team.getProperties().get(TeamProperties.COLOR);
 					float[] hsb = Color4I.RGBtoHSB(teamColor.redi(), teamColor.greeni(), teamColor.bluei(), null);

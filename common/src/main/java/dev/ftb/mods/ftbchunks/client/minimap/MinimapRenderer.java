@@ -155,7 +155,7 @@ public class MinimapRenderer {
     }
 
     private static boolean shouldSkipMinimapRendering(Minecraft mc) {
-        return mc.player == null || mc.level == null || mc.options.hideGui
+        return mc.player == null || mc.level == null || mc.gui.hud.isHidden()
                 || MapManager.getInstance().isEmpty()
                 || MapDimension.getCurrent().isEmpty()
                 || !FTBChunksClientConfig.MINIMAP_ENABLED.get()

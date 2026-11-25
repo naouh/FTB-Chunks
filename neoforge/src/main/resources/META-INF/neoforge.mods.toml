@@ -34,14 +34,14 @@ side = "BOTH"
 [[dependencies.ftbchunks]]
 modId = "ftblibrary"
 type = "required"
-versionRange = "[${ftblibraryversion},)"
+versionRange = "${ftb_library_version_range_maven}"
 ordering = "AFTER"
 side = "BOTH"
 
 [[dependencies.ftbchunks]]
 modId = "ftbteams"
 type = "required"
-versionRange = "[${ftbteamsversion},)"
+versionRange = "${ftb_teams_version_range_maven}"
 ordering = "AFTER"
 side = "BOTH"
 

@@ -205,7 +205,7 @@ public class LargeMapScreen extends BaseScreen {
             Play2ServerNetworking.send(new TeleportFromMapPacket(regionPanel.blockPos().above(), regionPanel.blockY == HeightUtils.UNKNOWN, dimension.dimension));
             closeGui(false);
             return true;
-        } else if (key.is(InputConstants.KEY_G) && InputConstants.isKeyDown(Minecraft.getInstance().getWindow(), InputConstants.KEY_F3)) {
+        } else if (key.is(InputConstants.KEY_G) && InputConstants.isKeyDown(InputConstants.KEY_F3)) {
             FTBChunksClientConfig.CHUNK_GRID.toggle();
             FTBChunksClientConfig.saveNeeded();
             dimension.getManager().updateAllRegions(false);
@@ -335,7 +335,7 @@ public class LargeMapScreen extends BaseScreen {
     }
 
     public static void refreshIconsIfOpen() {
-        if (Minecraft.getInstance().screen instanceof ScreenWrapper sw && sw.getGui() instanceof LargeMapScreen lms) {
+        if (Minecraft.getInstance().gui.screen() instanceof ScreenWrapper sw && sw.getGui() instanceof LargeMapScreen lms) {
             lms.refreshIcons();
         }
     }

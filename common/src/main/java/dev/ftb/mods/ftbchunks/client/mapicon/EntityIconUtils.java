@@ -7,11 +7,12 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.player.Player;
 
 public class EntityIconUtils {
     public static boolean canTypeRender(EntityType<?> type) {
-        return type != EntityType.PLAYER && EntityIconLoader.getSettings(type).isPresent();
+        return type != EntityTypes.PLAYER && EntityIconLoader.getSettings(type).isPresent();
     }
 
     public static boolean shouldEntityRender(Entity entity, Player player) {

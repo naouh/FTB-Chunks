@@ -1,5 +1,6 @@
 package dev.ftb.mods.ftbchunks.client;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import dev.ftb.mods.ftbchunks.api.client.icon.MapIcon;
 import dev.ftb.mods.ftbchunks.api.client.icon.MapType;
 import dev.ftb.mods.ftbchunks.client.map.MapDimension;
@@ -12,6 +13,7 @@ import dev.ftb.mods.ftblibrary.math.MathUtils;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.client.renderer.state.level.LevelRenderState;
 import net.minecraft.util.Mth;
@@ -97,10 +99,10 @@ public class InWorldIconRenderer {
         inWorldMapIcons.clear();
     }
 
-    public void renderBeacons() {
+    public void submitBeacons(SubmitNodeCollector collector, PoseStack poseStack) {
         Minecraft mc = Minecraft.getInstance();
 
-        if (!mc.options.hideGui
+        if (!mc.gui.hud.isHidden()
                 && mc.level != null
                 && mc.player != null
                 && cameraPos != null
@@ -108,7 +110,7 @@ public class InWorldIconRenderer {
                 && MapDimension.getCurrent().isPresent()
                 && FTBChunksWorldConfig.playerHasMapStage(mc.player))
         {
-            WaypointBeaconRenderer.renderBeacons(mc, mc.getDeltaTracker(), cameraPos);
+            WaypointBeaconRenderer.submitBeacons(mc, mc.getDeltaTracker(), cameraPos, collector, poseStack);
         }
     }
 

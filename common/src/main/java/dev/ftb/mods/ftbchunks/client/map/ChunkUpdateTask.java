@@ -16,13 +16,13 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.biome.BiomeManager;
+import net.minecraft.world.level.biome.BiomeResolver;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.levelgen.Heightmap;
 import org.jspecify.annotations.Nullable;
 
-public class ChunkUpdateTask implements MapTask, BiomeManager.NoiseBiomeSource {
+public class ChunkUpdateTask implements MapTask, BiomeResolver {
 	private static final int[] ALL_BLOCKS = Util.make(new int[256], array -> {
 		for (int i = 0; i < 256; i++) {
 			array[i] = i;

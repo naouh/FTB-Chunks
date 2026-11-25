@@ -132,7 +132,7 @@ public enum FTBChunksClient {
     }
 
     private void checkKeyPresses(Minecraft client) {
-        if (client.screen != null || !FTBChunksWorldConfig.playerHasMapStage(ClientUtils.getClientPlayer())) {
+        if (client.gui.screen() != null || !FTBChunksWorldConfig.playerHasMapStage(ClientUtils.getClientPlayer())) {
             return;
         }
 
@@ -192,7 +192,7 @@ public enum FTBChunksClient {
                 manager.releaseStaleRegionData(releaseInterval * 1000L);
             }
 
-            if (mc.screen == null) {
+            if (mc.gui.screen() == null) {
                 manager.checkForRegionPurge();
             }
 
@@ -326,7 +326,7 @@ public enum FTBChunksClient {
     private void maybeClearDeathpoint(Player player) {
         int maxDist = FTBChunksClientConfig.DEATH_WAYPOINT_AUTOREMOVE_DISTANCE.get();
         MapManager.getInstance().ifPresent(manager -> {
-            if (maxDist > 0 && Minecraft.getInstance().screen == null) {
+            if (maxDist > 0 && Minecraft.getInstance().gui.screen() == null) {
                 WaypointManagerImpl wpm = manager.getDimension(player.level().dimension()).getWaypointManager();
                 wpm.getNearestDeathpoint(player).ifPresent(wp -> {
                     if (wp.getDistanceSq(player) < maxDist * maxDist) {

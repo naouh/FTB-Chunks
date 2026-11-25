@@ -248,7 +248,8 @@ public class NeoEventListeners {
     /// <a href="https://github.com/MinecraftForge/MinecraftForge/issues/8143">...</a>
     ///
     /// @param event the event
-    private void entityInteractSpecific(PlayerInteractEvent.EntityInteractSpecific event) {
+    // 26.3: NeoForge merged EntityInteractSpecific into EntityInteract (which now carries the local interaction position)
+    private void entityInteractSpecific(PlayerInteractEvent.EntityInteract event) {
         if (!event.getEntity().level().isClientSide() && ClaimedChunkManagerImpl.getInstance().shouldPreventInteraction(event.getEntity(), event.getHand(), event.getEntity().blockPosition(), Protection.INTERACT_ENTITY, event.getTarget())) {
             event.setCancellationResult(InteractionResult.FAIL);
             event.setCanceled(true);

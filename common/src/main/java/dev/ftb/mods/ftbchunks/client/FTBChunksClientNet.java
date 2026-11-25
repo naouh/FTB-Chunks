@@ -68,7 +68,7 @@ public class FTBChunksClientNet {
         Minecraft mc = Minecraft.getInstance();
 
         mc.submit(() -> {
-            mc.setScreen(null);
+            mc.gui.setScreen(null);
 
             new Thread(() -> {
                 try {
@@ -81,7 +81,7 @@ public class FTBChunksClientNet {
                     if (mc.hitResult instanceof BlockHitResult hitResult && mc.level != null && mc.player != null) {
                         Identifier id = BuiltInRegistries.BLOCK.getKey(mc.level.getBlockState(hitResult.getBlockPos()).getBlock());
                         Window window = mc.getWindow();
-                        Screenshot.takeScreenshot(mc.getMainRenderTarget(), image -> {
+                        Screenshot.takeScreenshot(mc.gameRenderer.mainRenderTarget(), image -> {
                             int col = image.getPixel(image.getWidth() / 2 - (int) (2D * window.getGuiScale()), image.getHeight() / 2 - (int) (2D * window.getGuiScale()));
                             String s = String.format("\"%s\": \"#%06X\"", id.getPath(), ColorUtils.convertFromNative(col) & 0xFFFFFF);
                             mc.player.sendSystemMessage(Component.literal(id.getNamespace() + " - " + s)
@@ -119,8 +119,8 @@ public class FTBChunksClientNet {
 
     public static void handleVanillaPacket(ClientboundLevelChunkWithLightPacket p) {
         Level level = Minecraft.getInstance().level;
-        if (level != null && level.hasChunk(p.getX(), p.getZ())) {
-            FTBChunksClient.INSTANCE.getRerenderTracker().requestRerender(new ChunkPos(p.getX(), p.getZ()));
+        if (level != null && level.hasChunk(p.x(), p.z())) {
+            FTBChunksClient.INSTANCE.getRerenderTracker().requestRerender(new ChunkPos(p.x(), p.z()));
         }
     }
 

@@ -41,6 +41,7 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.entity.player.Player;
@@ -316,7 +317,7 @@ public class FTBChunks {
     }
 
 	public boolean checkSpawn(EntityType<?> entityType, LevelAccessor levelAccessor, double x, double y, double z, EntitySpawnReason type, @Nullable BaseSpawner spawner) {
-		if (!levelAccessor.isClientSide() && entityType != EntityType.PLAYER && levelAccessor instanceof Level level) {
+		if (!levelAccessor.isClientSide() && entityType != EntityTypes.PLAYER && levelAccessor instanceof Level level) {
 			switch (type) {
 				case NATURAL, CHUNK_GENERATION, SPAWNER, STRUCTURE, JOCKEY, PATROL -> {
 					ClaimedChunkImpl chunk = ClaimedChunkManagerImpl.getInstance().getChunk(new ChunkDimPos(level, BlockPos.containing(x, y, z)));

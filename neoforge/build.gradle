@@ -4,17 +4,24 @@ plugins {
 
 neoForge {
 	version = project.neoforge_version
+	// ultimateneo: fail the build if an AT entry no longer matches 26.3
+	validateAccessTransformers = true
 
 	runs {
 		client {
-			client()
-			systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+			client()			systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
 		}
 
 		server {
 			server()
 			programArgument '--nogui'
 			systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+		}
+
+		// ultimateneo: headless test run (no EULA needed): gradlew :neoforge:runGameTestServer
+		gameTestServer {
+			type = "gameTestServer"
+			systemProperty "neoforge.enabledGameTestNamespaces", project.mod_id
 		}
 
 		configureEach {
@@ -31,6 +38,11 @@ neoForge {
 	}
 }
 
+// ultimateneo: forward the console to the dev server so it can be stopped cleanly with "stop"
+tasks.named('runServer', JavaExec).configure {
+	standardInput = System.in
+}
+
 repositories {
 	maven {
 		url "https://maven.neoforged.net/releases/"
@@ -40,7 +52,8 @@ repositories {
 dependencies {
 	implementation("dev.ftb.mods:ftb-library-neoforge:${rootProject.ftb_library_version}")
 	implementation("dev.ftb.mods:ftb-teams-neoforge:${rootProject.ftb_teams_version}")
-	implementation("dev.ftb.mods:ftb-backups-3:${rootProject.ftb_backups3_version}")
+	// ultimateneo: optional integration with no 26.3 build; compile-only, not on the dev runtime
+	compileOnly("dev.ftb.mods:ftb-backups-3:${rootProject.ftb_backups3_version}")
 }
 
 jar {

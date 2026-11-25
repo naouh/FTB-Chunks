@@ -7,6 +7,7 @@ import dev.ftb.mods.ftbchunks.api.client.event.ChunksUpdatedFromServerEvent;
 import dev.ftb.mods.ftbchunks.api.client.event.WaypointManagerAvailableEvent;
 import dev.ftb.mods.ftbchunks.api.neoforge.FTBChunksClientEvent;
 import dev.ftb.mods.ftbchunks.client.FTBChunksClient;
+import dev.ftb.mods.ftbchunks.client.ModRenderPipelines;
 import dev.ftb.mods.ftblibrary.api.neoforge.FTBLibraryEvent;
 import dev.ftb.mods.ftblibrary.platform.Platform;
 import dev.ftb.mods.ftblibrary.util.neoforge.NeoEventHelper;
@@ -23,8 +24,11 @@ import net.neoforged.neoforge.common.NeoForge;
 public class FTBChunksNeoForgeClient {
     private final FTBChunksClient client;
 
-    public FTBChunksNeoForgeClient() {
+    public FTBChunksNeoForgeClient(IEventBus modBus) {
         client = FTBChunksClient.INSTANCE.init();
+
+        // ultimateneo: register the masked minimap pipeline so it is compiled with the vanilla pipelines at resource load
+        modBus.addListener(RegisterRenderPipelinesEvent.class, event -> event.registerPipeline(ModRenderPipelines.MINIMAP_MASKED));
 
         IEventBus bus = NeoForge.EVENT_BUS;
 
@@ -34,8 +38,9 @@ public class FTBChunksNeoForgeClient {
 
         bus.addListener(ExtractLevelRenderStateEvent.class, event ->
                 client.getInWorldIconRenderer().extractRenderState(event.getRenderState()));
-        bus.addListener(RenderLevelStageEvent.AfterTranslucentParticles.class, _ ->
-                client.getInWorldIconRenderer().renderBeacons());
+        // 26.3: beacons are submitted as custom geometry (no immediate-mode buffer source in RenderLevelStageEvent)
+        bus.addListener(SubmitCustomGeometryEvent.class, event ->
+                client.getInWorldIconRenderer().submitBeacons(event.getSubmitNodeCollector(), event.getPoseStack()));
         bus.addListener(RenderGuiEvent.Post.class, event -> client.onRenderHUD(event.getGuiGraphics(), event.getPartialTick()));
         bus.addListener(ScreenEvent.Init.Pre.class, event -> client.onGuiInit(event.getScreen()));
 

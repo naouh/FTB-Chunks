@@ -179,7 +179,7 @@ public class ChunkScreen extends AbstractThreePanelScreen<ChunkScreenPanel> {
         public void addWidgets() {
             add(closeButton);
             add(removeAllClaims);
-            if (!Minecraft.getInstance().isSingleplayer() && openedAs == null && ClientUtils.getClientPlayer().permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER)) {
+            if (!Minecraft.getInstance().isLocalServer() && openedAs == null && ClientUtils.getClientPlayer().permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER)) {
                 add(adminButton);
             }
             add(mouseReferenceButton);
