@@ -79,12 +79,14 @@ public interface FTBChunksWorldConfig {
 
 	Config FORCE_LOADING = CONFIG.addGroup("force_loading");
 	EnumValue<ForceLoadMode> FORCE_LOAD_MODE = FORCE_LOADING
-			.addEnum("force_load_mode", ForceLoadMode.NAME_MAP)
+			// Ultimate Neo: ALWAYS by default. DEFAULT needs the FTB Ranks permission ftbchunks.chunk_load_offline, and FTB Ranks
+			// has no 26.3 build, so force-loaded chunks stopped as soon as the team logged off (user, 2026-11-26).
+			.addEnum("force_load_mode", ForceLoadMode.NAME_MAP, ForceLoadMode.ALWAYS)
 			.comment("Control how force-loaded chunks work.","NEVER: only allow chunk force-loading if the owning team has at least one online player.","ALWAYS: always allow force-loading, even if no players are online.","DEFAULT: allow force-loading IF the team has at least one player with the 'ftbchunks.chunk_load_offline' FTB Ranks permission.");
 
 	IntValue MAX_FORCE_LOADED_CHUNKS = FORCE_LOADING.addInt("max_force_loaded_chunks", 25)
 			.comment("Max force loaded chunks.", "You can override this with FTB Ranks 'ftbchunks.max_force_loaded' permission");
-	DoubleValue MAX_IDLE_DAYS_BEFORE_UNFORCE = FORCE_LOADING.addDouble("max_idle_days_before_unforce", 0D, 0D, 3650D)
+	DoubleValue MAX_IDLE_DAYS_BEFORE_UNFORCE = FORCE_LOADING.addDouble("max_idle_days_before_unforce", 7D, 0D, 3650D) // Ultimate Neo: 7 days (user, 2026-11-26)
 			.comment("Maximum time (in real-world days) where if no player in a team logs in, any forceloaded chunks owned by the team are no longer forceloaded.", "Prevents chunks being forceloaded indefinitely by teams who no longer play.","Default of 0 means no automatic loss of forceloading.");
 	IntValue HARD_TEAM_FORCE_LIMIT = FORCE_LOADING.addInt("hard_team_force_limit", 0, 0, Integer.MAX_VALUE)
 			.comment("Hard limit for the number of chunks a team can force-load, regardless of how many members. Default of 0 means no hard limit.");
